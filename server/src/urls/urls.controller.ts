@@ -1,12 +1,12 @@
 import {
-  Controller,
-  Post,
   Body,
-  Get,
+  Controller,
   Delete,
-  UseGuards,
+  Get,
   Param,
+  Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UrlsService } from './urls.service';
 import { CreateUrlDto } from './dto/create-url.dto';

@@ -24,7 +24,7 @@ export class UrlEntity {
   @Column()
   alias?: string;
 
-  @Column()
+  @Column({ default: 0 })
   clickCount: number;
 
   @Column()
@@ -33,7 +33,10 @@ export class UrlEntity {
   @ManyToOne(() => UserEntity, (user) => user.urls)
   user: UserEntity;
 
-  @OneToMany(() => IpEntity, (ip) => ip.url, { cascade: true })
+  @OneToMany(() => IpEntity, (ip) => ip.url, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   ips: IpEntity[];
 
   @CreateDateColumn({

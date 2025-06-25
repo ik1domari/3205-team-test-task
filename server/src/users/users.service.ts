@@ -21,11 +21,17 @@ export class UsersService {
   }
 
   async findById(id: number) {
-    return this.repository.findOne({
+    const findUser = await this.repository.findOne({
       where: {
         id,
       },
     });
+
+    if (!findUser) {
+      throw new Error('User not found');
+    }
+
+    return { id: findUser.id, login: findUser.login, name: findUser.name };
   }
 
   hashPassword(password: string) {

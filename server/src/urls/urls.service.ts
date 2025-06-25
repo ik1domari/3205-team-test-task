@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { GoneException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UrlEntity } from './entities/url.entity';
 import { Repository } from 'typeorm';
-import { IpEntity } from 'src/ips/entities/ip.entity';
 import { IpsService } from '../ips/ips.service';
+import { AnalyticsResponseDto } from './dto/analytics-response.dto';
+import { IpEntity } from '../ips/entities/ip.entity';
 
 @Injectable()
 export class UrlsService {
@@ -14,12 +15,10 @@ export class UrlsService {
     private readonly ipService: IpsService,
   ) {}
   async create(createUrlDto: CreateUrlDto, userId: number) {
-    const linkId = Array(8)
+    const shortUrl = Array(8)
       .fill(null)
       .map(() => Math.round(Math.random() * 36).toString(36))
       .join('');
-
-    const shortUrl = `http://localhost:3000/${linkId}`;
 
     const url = await this.repository.save({
       ...createUrlDto,
@@ -40,17 +39,19 @@ export class UrlsService {
     });
 
     if (!url) {
-      throw new Error('Url not found');
+      throw new NotFoundException('Url not found');
     }
 
     if (url.expiresAt && url.expiresAt < new Date()) {
-      throw new Error('Url expired');
+      throw new GoneException('Url expired');
     }
 
-    ++url.clickCount;
+    url.clickCount++;
 
-    if (!url.ips.find((i) => i.ip === ip)) {
-    }
+    await this.ipService.create({
+      ip,
+      urlId: url.id,
+    });
 
     await this.repository.save(url);
 
@@ -65,7 +66,7 @@ export class UrlsService {
     });
 
     if (!url) {
-      throw new Error('Url not found');
+      throw new NotFoundException('Url not found');
     }
 
     return {
@@ -75,11 +76,51 @@ export class UrlsService {
     };
   }
 
-  getAnalytics(shortUrl: string) {
-    return `This action returns a ${shortUrl} url analytics`;
+  async getAnalytics(shortUrl: string): Promise<AnalyticsResponseDto> {
+    const url = await this.repository.findOne({
+      where: { shortUrl },
+      relations: ['ips'],
+      order: {
+        ips: {
+          createdAt: 'DESC',
+        },
+      },
+    });
+
+    if (!url) {
+      throw new Error('Url not found');
+    }
+
+    const lastIps = url.ips.slice(0, 5).map((ip) => ip.ip);
+
+    return {
+      clickCount: url.clickCount,
+      lastIps,
+    };
   }
 
-  remove(shortUrl: string) {
-    return `This action removes a #${shortUrl} url`;
+  async remove(shortUrl: string) {
+    const url = await this.repository.findOne({
+      where: { shortUrl },
+      relations: ['ips'],
+    });
+
+    if (!url) {
+      throw new NotFoundException('Url not found');
+    }
+
+    return this.repository.manager.transaction(
+      async (transactionalEntityManager) => {
+        if (url.ips && url.ips.length > 0) {
+          await transactionalEntityManager.delete(IpEntity, {
+            url: { id: url.id },
+          });
+        }
+
+        await transactionalEntityManager.delete(UrlEntity, { id: url.id });
+
+        return { message: 'URL and all related IPs deleted successfully' };
+      },
+    );
   }
 }

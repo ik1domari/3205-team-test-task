@@ -27,11 +27,9 @@ export class IpsService {
     }
   }
 
-  findAll() {
-    return `This action returns all ips`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} ip`;
+  async remove(id: number) {
+    return this.repository.delete({
+      id,
+    });
   }
 }
