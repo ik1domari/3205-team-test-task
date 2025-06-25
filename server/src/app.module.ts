@@ -8,6 +8,8 @@ import { UrlsModule } from './urls/urls.module';
 import { UrlEntity } from './urls/entities/url.entity';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { IpsModule } from './ips/ips.module';
+import { IpEntity } from './ips/entities/ip.entity';
 
 @Module({
   imports: [
@@ -19,12 +21,13 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [UserEntity, UrlEntity],
+      entities: [UserEntity, UrlEntity, IpEntity],
       synchronize: true,
     }),
     UsersModule,
     UrlsModule,
     AuthModule,
+    IpsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

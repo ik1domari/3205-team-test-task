@@ -4,11 +4,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { IpEntity } from '../../ips/entities/ip.entity';
 
-@Entity()
+@Entity('urls')
 export class UrlEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -30,6 +32,9 @@ export class UrlEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.urls)
   user: UserEntity;
+
+  @OneToMany(() => IpEntity, (ip) => ip.url, { cascade: true })
+  ips: IpEntity[];
 
   @CreateDateColumn({
     type: 'timestamp',
