@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background-color: #222;
-  color: #fff;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
 }

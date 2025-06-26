@@ -9,10 +9,16 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AButton: typeof import('ant-design-vue/es')['Button']
+    ADatePicker: typeof import('ant-design-vue/es')['DatePicker']
     AInput: typeof import('ant-design-vue/es')['Input']
+    AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
     ASpace: typeof import('ant-design-vue/es')['Space']
+    ATypography: typeof import('ant-design-vue/es')['Typography']
+    ATypographyLink: typeof import('ant-design-vue/es')['TypographyLink']
+    ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
     Container: typeof import('./src/components/Container.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ShadowBox: typeof import('./src/components/ShadowBox.vue')['default']
   }
 }

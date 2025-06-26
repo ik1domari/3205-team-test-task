@@ -4,7 +4,7 @@ import Container from "./components/Container.vue";
 
 <template>
   <main class="m-4">
-    <container class="flex flex-col items-center">
+    <container>
       <router-view></router-view>
     </container>
   </main>

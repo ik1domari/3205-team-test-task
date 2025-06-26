@@ -1,5 +1,7 @@
 <template>
-  <div class="m-4 max-w-[1200px] mx-auto">
+  <div
+    class="my-20 max-w-[1200px] mx-auto flex flex-col items-center justify-center"
+  >
     <slot></slot>
   </div>
 </template>

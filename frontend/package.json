@@ -12,8 +12,10 @@
     "@formkit/auto-animate": "^0.8.2",
     "@tailwindcss/vite": "^4.1.10",
     "ant-design-vue": "4.x",
+    "axios": "^1.10.0",
     "tailwindcss": "^4.1.10",
     "vue": "^3.5.13",
+    "vue-cookies": "^1.8.6",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
