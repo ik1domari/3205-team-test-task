@@ -1,0 +1,40 @@
+services:
+  db:
+    container_name: db
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - TZ='GMT+5'
+      - PGTZ='GMT+5'
+    ports:
+      - "5432:5432"
+    tty: true
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d task-3205-team" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    volumes:
+      - pgdata:/var/lib/postgresql
+  task-3205-team:
+    image: node:23-alpine
+    container_name: task-3205-team
+    tty: true
+    command: npm run start
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:admin@db:5432/task-3205-team
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata: {}

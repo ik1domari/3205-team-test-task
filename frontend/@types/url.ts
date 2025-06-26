@@ -8,14 +8,3 @@ export type Url = {
   createdAt: Date;
   updatedAt: Date;
 };
-
-export type CreateUrlDto = {
-  originalUrl: string;
-  alias?: string;
-  expiresAt?: Date;
-};
-
-export type AnalyticsResponseDto = {
-  clickCount: number;
-  lastIps: string[];
-};

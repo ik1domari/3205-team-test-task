@@ -3,7 +3,7 @@ import { inject, onMounted, provide, ref } from "vue";
 import { useRouter } from "vue-router";
 import type { VueCookies } from "vue-cookies";
 import type { Url } from "../../@types/url.ts";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import ShadowBox from "../components/ShadowBox.vue";
 import UrlListItem from "../components/UrlListItem.vue";
 
@@ -91,6 +91,9 @@ const onClickShorten = async () => {
       await fetchData();
     }
   } catch (error) {
+    if (error instanceof AxiosError && error.status === 406) {
+      errorText.value = "Alias should not be longer than 20 chars";
+    }
     console.log(error);
     errorText.value = "Something went wrong";
   }
@@ -121,7 +124,11 @@ provide("onClickLogout", onClickLogout);
     <form class="mt-4">
       <a-space direction="vertical">
         <a-input v-model:value="urlController" placeholder="Enter url" />
-        <a-input v-model:value="aliasController" placeholder="Enter alias" />
+        <a-input
+          :maxlength="20"
+          v-model:value="aliasController"
+          placeholder="Enter alias"
+        />
         <a-date-picker
           class="w-full"
           v-model:value="expireDateController"

@@ -1,4 +1,10 @@
-import { GoneException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  GoneException,
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UrlEntity } from './entities/url.entity';
@@ -19,6 +25,10 @@ export class UrlsService {
       .fill(null)
       .map(() => Math.round(Math.random() * 36).toString(36))
       .join('');
+
+    if (createUrlDto.alias && createUrlDto.alias?.length > 20) {
+      throw new NotAcceptableException('Too long alias');
+    }
 
     const url = await this.repository.save({
       ...createUrlDto,
