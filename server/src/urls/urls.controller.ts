@@ -33,6 +33,11 @@ export class UrlsController {
     return this.urlsService.findOne(shortUrl, ip);
   }
 
+  @Get('urls/getall')
+  findAll(@UserId() userId: number) {
+    return this.urlsService.findAll(userId);
+  }
+
   @Get('info/:shortUrl')
   findInfo(@Param('shortUrl') shortUrl: string) {
     return this.urlsService.findInfo(shortUrl);

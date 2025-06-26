@@ -21,13 +21,13 @@ export class UrlEntity {
   @Column()
   shortUrl: string;
 
-  @Column()
+  @Column({ nullable: true })
   alias?: string;
 
   @Column({ default: 0 })
   clickCount: number;
 
-  @Column()
+  @Column({ nullable: true })
   expiresAt?: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.urls)

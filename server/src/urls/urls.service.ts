@@ -31,6 +31,19 @@ export class UrlsService {
     };
   }
 
+  async findAll(userId: number) {
+    return this.repository.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+      order: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
   async findOne(shortUrl: string, ip: string) {
     const url = await this.repository.findOne({
       where: {
