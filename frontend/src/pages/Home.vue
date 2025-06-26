@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject, onMounted, ref } from "vue";
+import { inject, onMounted, provide, ref } from "vue";
 import { useRouter } from "vue-router";
 import type { VueCookies } from "vue-cookies";
 import type { Url } from "../../@types/url.ts";
@@ -10,18 +10,18 @@ import UrlListItem from "../components/UrlListItem.vue";
 const urlController = ref<string>("");
 const aliasController = ref<string>("");
 const expireDateController = ref<Date>();
-const take = ref<number>(3);
 
 const errorText = ref<string>("");
 const successText = ref<string>("");
 const loadingUrls = ref<boolean>(true);
+const userName = ref<string>("");
 
 const existingUrls = ref<Url[]>([]);
 
 const $cookies = inject<VueCookies>("$cookies");
 const router = useRouter();
 
-const fetchUrls = async (take: number) => {
+const fetchData = async () => {
   try {
     const token = $cookies?.get("token");
     if (!token) {
@@ -29,14 +29,24 @@ const fetchUrls = async (take: number) => {
       return;
     }
 
-    const { data } = await axios.get(
-      `http://localhost:8080/urls/getall?take=${take}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    const { data: user } = await axios.get("http://localhost:8080/users/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
+
+    if (!user) {
+      await router.push("/auth");
+      return;
+    }
+
+    userName.value = user.name;
+
+    const { data } = await axios.get(`http://localhost:8080/urls/getall`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     existingUrls.value = data;
     console.log(data);
@@ -78,7 +88,7 @@ const onClickShorten = async () => {
     if (data.shortUrl) {
       successText.value = `Success. Your link is http://localhost:5173/${data.shortUrl}`;
       errorText.value = "";
-      await fetchUrls();
+      await fetchData();
     }
   } catch (error) {
     console.log(error);
@@ -86,12 +96,28 @@ const onClickShorten = async () => {
   }
 };
 
-onMounted(fetchUrls);
+const onClickLogout = async () => {
+  $cookies?.remove("token");
+  await router.push("/auth");
+};
+
+onMounted(fetchData);
+
+provide("onClickLogout", onClickLogout);
 </script>
 
 <template>
-  <shadow-box>
-    <h1 class="text-3xl font-bold">URL Shortener</h1>
+  <a-space class="flex justify-center w-full items-center">
+    <a-typography-text class="text-3xl font-bold"
+      >Hello, {{ userName }}!</a-typography-text
+    >
+    <a-button @click="onClickLogout">Logout </a-button>
+  </a-space>
+
+  <shadow-box class="mt-4">
+    <a-space class="flex justify-between w-full items-center">
+      <h1 class="text-3xl font-bold">URL Shortener</h1>
+    </a-space>
     <form class="mt-4">
       <a-space direction="vertical">
         <a-input v-model:value="urlController" placeholder="Enter url" />
@@ -119,7 +145,4 @@ onMounted(fetchUrls);
       :alias="url.alias"
     />
   </div>
-  <a-button type="primary" v-if="take < existingUrls.length" @click="take += 3"
-    >Show more</a-button
-  >
 </template>

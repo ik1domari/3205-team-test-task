@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AButton: typeof import('ant-design-vue/es')['Button']
     ADatePicker: typeof import('ant-design-vue/es')['DatePicker']
+    AFloatButton: typeof import('ant-design-vue/es')['FloatButton']
     AInput: typeof import('ant-design-vue/es')['Input']
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
     ASpace: typeof import('ant-design-vue/es')['Space']
@@ -20,7 +21,10 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ShadowBox: typeof import('./src/components/ShadowBox.vue')['default']
+    UrlAnalyticsBlock: typeof import('./src/components/UrlAnalyticsBlock.vue')['default']
     UrlComponent: typeof import('./src/components/UrlComponent.vue')['default']
+    UrlInfoBlock: typeof import('./src/components/UrlInfoBlock.vue')['default']
+    URLInfoBlock: typeof import('./src/components/URLInfoBlock.vue')['default']
     UrlListItem: typeof import('./src/components/UrlListItem.vue')['default']
   }
 }

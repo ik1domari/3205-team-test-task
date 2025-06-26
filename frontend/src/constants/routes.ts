@@ -4,6 +4,7 @@ import Registration from "../pages/Registration.vue";
 import ShortUrlRedirect from "../pages/ShortUrlRedirect.vue";
 import NotFound from "../pages/NotFound.vue";
 import Expired from "../pages/Expired.vue";
+import UrlPage from "../pages/UrlPage.vue";
 
 export const routes = [
   {
@@ -29,5 +30,9 @@ export const routes = [
   {
     path: "/expired",
     component: Expired,
+  },
+  {
+    path: "/url/:shortUrl",
+    component: UrlPage,
   },
 ];

@@ -29,9 +29,6 @@ const onClickLogin = async () => {
 
     $cookies?.set("token", data.token);
 
-    const token = $cookies?.get("token");
-    console.log(token);
-
     await router.push("/");
   } catch (err) {
     if (err instanceof AxiosError && err.status === 401) {

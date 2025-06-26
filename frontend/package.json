@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^7.0.1",
     "@formkit/auto-animate": "^0.8.2",
     "@tailwindcss/vite": "^4.1.10",
     "ant-design-vue": "4.x",
