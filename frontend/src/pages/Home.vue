@@ -5,10 +5,12 @@ import type { VueCookies } from "vue-cookies";
 import type { Url } from "../../@types/url.ts";
 import axios from "axios";
 import ShadowBox from "../components/ShadowBox.vue";
+import UrlListItem from "../components/UrlListItem.vue";
 
 const urlController = ref<string>("");
 const aliasController = ref<string>("");
 const expireDateController = ref<Date>();
+const take = ref<number>(3);
 
 const errorText = ref<string>("");
 const successText = ref<string>("");
@@ -19,7 +21,7 @@ const existingUrls = ref<Url[]>([]);
 const $cookies = inject<VueCookies>("$cookies");
 const router = useRouter();
 
-const fetchUrls = async () => {
+const fetchUrls = async (take: number) => {
   try {
     const token = $cookies?.get("token");
     if (!token) {
@@ -27,11 +29,14 @@ const fetchUrls = async () => {
       return;
     }
 
-    const { data } = await axios.get("http://localhost:8080/urls/getall", {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const { data } = await axios.get(
+      `http://localhost:8080/urls/getall?take=${take}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     existingUrls.value = data;
     console.log(data);
@@ -73,6 +78,7 @@ const onClickShorten = async () => {
     if (data.shortUrl) {
       successText.value = `Success. Your link is http://localhost:5173/${data.shortUrl}`;
       errorText.value = "";
+      await fetchUrls();
     }
   } catch (error) {
     console.log(error);
@@ -107,29 +113,13 @@ onMounted(fetchUrls);
   </shadow-box>
 
   <div v-for="url in existingUrls" class="mt-4">
-    <shadow-box>
-      <a-space direction="vertical">
-        <a-typography-text>
-          <a-typography-text strong>Original URL:</a-typography-text>
-          <a-typography-link :href="url.originalUrl" target="_blank">
-            {{ url.originalUrl }}
-          </a-typography-link>
-        </a-typography-text>
-
-        <a-typography-text>
-          <a-typography-text strong>Short URL:</a-typography-text>
-          <a-typography-link
-            :href="`http://localhost:5173/${url.shortUrl}`"
-            target="_blank"
-          >
-            {{ url.shortUrl }}
-          </a-typography-link>
-        </a-typography-text>
-
-        <a-typography-text v-if="url.alias">
-          <a-typography-text strong>{{ url.alias }}</a-typography-text>
-        </a-typography-text>
-      </a-space>
-    </shadow-box>
+    <UrlListItem
+      :original-url="url.originalUrl"
+      :short-url="url.shortUrl"
+      :alias="url.alias"
+    />
   </div>
+  <a-button type="primary" v-if="take < existingUrls.length" @click="take += 3"
+    >Show more</a-button
+  >
 </template>

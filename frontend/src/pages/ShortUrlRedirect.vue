@@ -2,6 +2,7 @@
 import { onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios, { AxiosError } from "axios";
+import Container from "../components/Container.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -26,7 +27,13 @@ onMounted(async () => {
     } else if (err instanceof AxiosError && err.status === 410) {
       await router.push("/expired");
     }
-    console.log(err);
+    console.error(err);
   }
 });
 </script>
+
+<template>
+  <container>
+    <a-typography-text strong>Redirecting...</a-typography-text>
+  </container>
+</template>

@@ -31,7 +31,7 @@ export class UrlsService {
     };
   }
 
-  async findAll(userId: number) {
+  async findAll(userId: number, take?: number) {
     return this.repository.find({
       where: {
         user: {
@@ -41,6 +41,7 @@ export class UrlsService {
       order: {
         createdAt: 'desc',
       },
+      take,
     });
   }
 

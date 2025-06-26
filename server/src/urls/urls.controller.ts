@@ -34,8 +34,8 @@ export class UrlsController {
   }
 
   @Get('urls/getall')
-  findAll(@UserId() userId: number) {
-    return this.urlsService.findAll(userId);
+  findAll(@UserId() userId: number, @Query('take') take?: number) {
+    return this.urlsService.findAll(userId, take);
   }
 
   @Get('info/:shortUrl')

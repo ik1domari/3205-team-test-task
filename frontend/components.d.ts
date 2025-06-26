@@ -20,5 +20,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ShadowBox: typeof import('./src/components/ShadowBox.vue')['default']
+    UrlComponent: typeof import('./src/components/UrlComponent.vue')['default']
+    UrlListItem: typeof import('./src/components/UrlListItem.vue')['default']
   }
 }
